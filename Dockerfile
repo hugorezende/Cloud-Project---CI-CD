@@ -1,19 +1,22 @@
-# pull official base image
-FROM node:13.12.0-alpine
+# get the base node image
+FROM node:alpine as builder
 
-# set working directory
-WORKDIR /app
+# set the working dir for container
+WORKDIR /frontend
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+# copy the json file first
+COPY ./package.json /frontend
 
-# install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
+# install npm dependencies
 RUN npm install
 
-# add app
-COPY . ./
+# copy other project files
+COPY . .
 
-# start app
-CMD ["npm", "start"]  
+# build the folder
+RUN npm run build
+
+# Handle Nginx
+FROM nginx
+COPY --from=builder /frontend/build /usr/share/nginx/html
+COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf

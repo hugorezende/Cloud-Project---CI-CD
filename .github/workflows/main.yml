@@ -29,4 +29,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.PORT }}
-        script: whoami
+        script: ${{ secrets.DEPLOYMENT_SCRIPT }}
